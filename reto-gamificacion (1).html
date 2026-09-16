@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>RETO GAMIFICACIÓN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff3d9a; --purple:#8b5cf6; --blue:#3b82f6; --cyan:#22d3ee;
+  --green:#22c55e; --yellow:#facc15; --orange:#fb923c; --red:#ef4444;
+  --dark:#180a30; --dark2:#26154a; --dark3:#341c63;
+  --text:#fff7ff;
+  --l1a:#22d3ee; --l1b:#3b82f6;
+  --l2a:#8b5cf6; --l2b:#ff3d9a;
+  --l3a:#22c55e; --l3b:#facc15;
+  --l4a:#fb923c; --l4b:#ef4444;
+  --l5a:#ff3d9a; --l5b:#8b5cf6;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;height:100%;}
+body{
+  font-family:'Baloo 2','Fredoka',sans-serif;
+  background:radial-gradient(circle at 20% 10%, #341c63 0%, var(--dark) 55%, #0d0620 100%);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+  position:relative;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255,61,154,.18), transparent 40%),
+    radial-gradient(circle at 90% 15%, rgba(34,211,238,.18), transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(139,92,246,.2), transparent 45%);
+}
+#app{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:18px;}
+h1,h2,h3{font-family:'Fredoka',sans-serif;margin:0;}
+button{font-family:inherit;cursor:pointer;border:none;}
+.btn{
+  font-family:'Fredoka',sans-serif;
+  font-weight:600; font-size:1.15rem; color:#fff;
+  padding:16px 28px; border-radius:20px; border:none;
+  background:linear-gradient(135deg,var(--pink),var(--purple));
+  box-shadow:0 8px 0 #7a1552, 0 12px 20px rgba(0,0,0,.35);
+  transition:transform .12s, box-shadow .12s;
+  min-width:200px;
+}
+.btn:active{transform:translateY(6px);box-shadow:0 2px 0 #7a1552,0 4px 10px rgba(0,0,0,.3);}
+.btn:disabled{opacity:.4;cursor:not-allowed;filter:grayscale(.4);}
+.btn.blue{background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 8px 0 #1a4c8a,0 12px 20px rgba(0,0,0,.35);}
+.btn.green{background:linear-gradient(135deg,var(--green),#0ea55e);box-shadow:0 8px 0 #0a6b3d,0 12px 20px rgba(0,0,0,.35);}
+.btn.orange{background:linear-gradient(135deg,var(--yellow),var(--orange));box-shadow:0 8px 0 #a5540a,0 12px 20px rgba(0,0,0,.35);}
+.btn.red{background:linear-gradient(135deg,#ff6b6b,var(--red));box-shadow:0 8px 0 #8a1414,0 12px 20px rgba(0,0,0,.35);}
+.btn.small{padding:10px 18px;font-size:.95rem;min-width:auto;border-radius:14px;box-shadow:0 5px 0 rgba(0,0,0,.35);}
+.card{
+  background:linear-gradient(160deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:26px; padding:26px;
+  backdrop-filter:blur(6px);
+  box-shadow:0 10px 30px rgba(0,0,0,.3);
+}
+.container{width:100%;max-width:960px;display:flex;flex-direction:column;align-items:center;gap:20px;flex:1;}
+.logo-title{
+  font-size:clamp(2rem,7vw,3.4rem); font-weight:800; text-align:center;
+  background:linear-gradient(90deg,var(--pink),var(--yellow),var(--cyan),var(--purple));
+  background-size:300% auto; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:shine 5s linear infinite;
+  text-shadow:0 4px 18px rgba(0,0,0,.25);
+  letter-spacing:1px;
+}
+@keyframes shine{to{background-position:300% center;}}
+.subtitle{text-align:center;font-size:1.05rem;opacity:.9;font-weight:500;}
+.author{text-align:center;font-size:.9rem;opacity:.65;margin-top:2px;}
+.mode-grid{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;margin-top:10px;}
+.mode-card{
+  width:230px; padding:30px 18px; text-align:center; border-radius:24px; cursor:pointer;
+  border:2px solid rgba(255,255,255,.15);
+  transition:transform .15s, border-color .15s;
+  background:linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+}
+.mode-card:hover{transform:translateY(-6px);border-color:var(--cyan);}
+.mode-card .emoji{font-size:3.2rem;display:block;margin-bottom:10px;}
+input[type=text]{
+  font-family:inherit; font-size:1.2rem; padding:14px 18px; border-radius:16px;
+  border:2px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08); color:#fff;
+  outline:none; text-align:center; width:100%; max-width:320px;
+}
+input[type=text]::placeholder{color:rgba(255,255,255,.5);}
+input[type=text]:focus{border-color:var(--cyan);}
+.avatar-grid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:520px;}
+.avatar-opt{
+  font-size:2.4rem; width:66px; height:66px; display:flex; align-items:center; justify-content:center;
+  border-radius:18px; background:rgba(255,255,255,.08); border:3px solid transparent; transition:.15s;
+}
+.avatar-opt.selected{border-color:var(--yellow); background:rgba(250,204,21,.25); transform:scale(1.1);}
+.avatar-opt:hover{transform:scale(1.08);}
+@keyframes pop{from{transform:scale(.5);opacity:0;}to{transform:scale(1);opacity:1;}}
+.floating-avatars{position:relative;width:100%;height:120px;overflow:hidden;}
+.float-em{position:absolute;font-size:2rem;animation:floaty 6s ease-in-out infinite;opacity:.85;}
+@keyframes floaty{0%,100%{transform:translateY(0) rotate(0deg);}50%{transform:translateY(-18px) rotate(8deg);}}
+.big-number{font-size:clamp(5rem,22vw,9rem);font-weight:800;text-align:center;line-height:1;
+  background:linear-gradient(135deg,var(--yellow),var(--pink)); -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:bump .55s ease;}
+.result-avatar-circle{width:130px;height:130px;border-radius:50%;background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.03));border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:4.2rem;margin:0 auto 14px;}
+.result-name{font-size:1.8rem;font-weight:800;text-align:center;color:#e9dcff;}
+.badge-pill{display:inline-flex;align-items:center;gap:10px;padding:12px 26px;border-radius:30px;font-weight:800;font-size:1.05rem;color:#3a2400;margin:16px auto;background:linear-gradient(90deg,#f9a825,var(--orange));box-shadow:0 6px 18px rgba(249,168,37,.35);}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;width:100%;max-width:480px;margin:10px auto 0;}
+.stat-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:18px 10px;text-align:center;}
+.stat-num{font-size:2.1rem;font-weight:800;color:var(--purple);}
+.stat-label{font-size:.85rem;opacity:.75;letter-spacing:.5px;margin-top:2px;}
+.outline-btn{font-family:'Fredoka',sans-serif;font-weight:600;font-size:1.05rem;color:#e9dcff;padding:16px 28px;border-radius:20px;background:transparent;border:2px solid rgba(255,255,255,.35);min-width:200px;}
+@keyframes bump{0%{transform:scale(.3);opacity:0;}60%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
+.topbar{
+  width:100%;max-width:960px;display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;
+  background:rgba(0,0,0,.25); border-radius:18px; padding:10px 16px; font-size:.9rem; font-weight:600;
+}
+.pill{background:rgba(255,255,255,.12);padding:6px 14px;border-radius:20px;}
+.progress-outer{width:100%;height:16px;background:rgba(255,255,255,.15);border-radius:20px;overflow:hidden;}
+.progress-inner{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--green),var(--cyan));transition:width .3s;}
+.timer-wrap{display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;max-width:420px;}
+.timer-num{font-size:2.6rem;font-weight:800;}
+.timer-num.urgent{color:var(--red);animation:pulse .5s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
+.timer-bar-outer{width:100%;height:14px;background:rgba(255,255,255,.15);border-radius:10px;overflow:hidden;}
+.timer-bar-inner{height:100%;background:linear-gradient(90deg,var(--green),var(--yellow),var(--red));transition:width .25s linear;}
+.level-badge{padding:6px 16px;border-radius:20px;font-weight:700;font-size:.85rem;letter-spacing:.5px;}
+.question-box{width:100%;text-align:center;font-size:clamp(1.2rem,4vw,1.7rem);font-weight:700;padding:18px 10px;}
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;}
+@media (max-width:560px){.options-grid{grid-template-columns:1fr;}}
+.opt-btn{
+  padding:20px 16px;border-radius:20px;font-size:1.05rem;font-weight:600;color:#fff;text-align:left;
+  display:flex;align-items:center;gap:12px; transition:transform .12s, filter .12s;
+  box-shadow:0 6px 0 rgba(0,0,0,.35);
+}
+.opt-btn:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.35);}
+.opt-btn:disabled{filter:grayscale(.5);opacity:.6;}
+.opt-btn .letter{background:rgba(255,255,255,.25);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;}
+.opt0{background:linear-gradient(135deg,#ff5c9d,#c2246b);}
+.opt1{background:linear-gradient(135deg,#4fd1ff,#2563eb);}
+.opt2{background:linear-gradient(135deg,#8ef58e,#16a34a);}
+.opt3{background:linear-gradient(135deg,#ffd54f,#f97316);}
+.opt-btn.correct-answer{outline:4px solid #22c55e;box-shadow:0 0 26px #22c55e;}
+.opt-btn.wrong-answer{outline:4px solid #ef4444;opacity:.7;}
+.feedback-icon{font-size:4rem;text-align:center;}
+to{transform:translateX(0);opacity:1;}}
+.p1 .p2 .p3 .hint{opacity:.75;font-size:.85rem;text-align:center;}
+.explain-box{background:rgba(255,255,255,.08);border-left:4px solid var(--cyan);border-radius:12px;padding:14px 18px;font-size:.98rem;line-height:1.4;}
+#confettiLayer{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden;}
+.confetti-piece{position:absolute;top:-12px;width:10px;height:14px;opacity:.95;animation:confettiFall linear forwards;}
+@keyframes confettiFall{to{transform:translateY(112vh) rotate(720deg);opacity:0;}}
+.qr-box{background:#fff;padding:10px;border-radius:14px;display:inline-block;}
+.spin{animation:spin 1.4s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+::-webkit-scrollbar{width:8px;} ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.2);border-radius:10px;}
+.footer-id{margin-top:auto;padding-top:18px;text-align:center;font-size:.8rem;opacity:.55;}
+.error-msg{color:#ffb4b4;font-weight:600;text-align:center;}
+.link-btn{background:none;color:#bcd6ff;text-decoration:underline;font-weight:600;font-size:.9rem;}
+.two-col{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;width:100%;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="confettiLayer"></div>
+
+<script>
+/* ================= CONFIG ================= */
+const QUESTION_TIME = 25000; // ms por pregunta
+const AVATARS = ["🦚","🐰","🐯","🐷","🐻","🍎","🌽","🍌","🥕","🌺","🌸","🪷","☘️"];
+
+const QUESTIONS = [
+{level:1, levelName:"Calentamiento",
+  q:"¿Cuál es la definición más precisa de gamificación?",
+  options:[
+    "Usar elementos y mecánicas de juego (puntos, insignias, niveles, retos) en contextos no lúdicos para motivar el comportamiento.",
+    "Diseñar un videojuego completo que reemplace por completo la clase tradicional.",
+    "Motivar a los estudiantes ofreciendo únicamente calificaciones más altas por buen comportamiento.",
+    "Narrar el contenido de la clase como un cuento, sin incluir mecánicas de juego."
+  ],
+  correct:0,
+  explain:"La gamificación aplica elementos de juego (puntos, insignias, niveles, retos) a una actividad que no es en sí un juego. Reemplazar la clase por un juego completo es ABJ, no gamificación."},
+ {level:1, levelName:"Calentamiento",
+  q:"Los 'serious games' (juegos serios) se caracterizan por:",
+  options:[
+    "Ser videojuegos comerciales de alto presupuesto que ocasionalmente se usan en clase.",
+    "Tener un propósito principal distinto al entretenimiento, como educar, entrenar o concienciar.",
+    "Ser cualquier actividad gamificada que use puntos e insignias.",
+    "Usarse exclusivamente en entrenamiento militar o médico."
+  ],
+  correct:1,
+  explain:"Los serious games tienen como fin principal educar, entrenar o concienciar, usando el entretenimiento como vehículo; no se limitan a un único sector ni son lo mismo que 'cualquier' actividad con puntos."},
+ {level:1, levelName:"Calentamiento",
+  q:"¿Cuál de las siguientes es una herramienta digital pensada para gamificar el aula?",
+  options:[
+    "Solo las plataformas de videoconferencia como Zoom o Meet.",
+    "Cualquier procesador de texto o presentador de diapositivas, porque también se usan en clase.",
+    "Plataformas como Kahoot, Classcraft o Genially, diseñadas para aplicar mecánicas de juego.",
+    "Exclusivamente consolas de videojuegos conectadas a un proyector."
+  ],
+  correct:2,
+  explain:"Existen plataformas específicas (Kahoot, Classcraft, Genially, ClassDojo, etc.) creadas para aplicar mecánicas de juego en el aula; herramientas de oficina o videoconferencia no cumplen esa función por sí solas."},
+
+ {level:2, levelName:"Gamificación vs. ABJ",
+  q:"¿Cuál es la principal diferencia entre Gamificación y Aprendizaje Basado en Juegos (ABJ)?",
+  options:[
+    "La gamificación siempre es individual y el ABJ siempre es grupal.",
+    "La gamificación se usa solo en primaria y el ABJ solo en secundaria.",
+    "El ABJ es simplemente gamificación aplicada con herramientas digitales.",
+    "La gamificación usa elementos de juego dentro de una actividad no lúdica; el ABJ usa un juego completo como estrategia de enseñanza."
+  ],
+  correct:3,
+  explain:"En el ABJ el juego completo ES la actividad de aprendizaje; en la gamificación se toman prestados elementos del juego para una actividad que no es en sí un juego. No depende de la edad, la tecnología ni de si es individual o grupal."},
+ {level:2, levelName:"Gamificación vs. ABJ",
+  q:"Un docente reemplaza toda su clase por una partida larga de un videojuego de estrategia para enseñar historia. Esto es un ejemplo de:",
+  options:[
+    "Gamificación, porque se usa un elemento tecnológico.",
+    "Aprendizaje Basado en Juegos (ABJ).",
+    "Ludificación de plástico, porque no hay retroalimentación.",
+    "Refuerzo positivo según Skinner, ya que genera motivación."
+  ],
+  correct:1,
+  explain:"Al usar el juego completo como la actividad de aprendizaje, se trata de ABJ. Usar tecnología no es lo que define la gamificación, y aquí sí hay retroalimentación propia del videojuego."},
+ {level:2, levelName:"Gamificación vs. ABJ",
+  q:"Una profesora entrega insignias solo por asistir a clase, sin retos, progresión ni retroalimentación significativa. Esto es un ejemplo de:",
+  options:[
+    "Aprendizaje Basado en Juegos, porque usa insignias como en los videojuegos.",
+    "Gamificación bien diseñada, porque motiva la asistencia.",
+    "Gamificación de plástico.",
+    "Aplicación de la Teoría del Flow, porque genera una rutina constante."
+  ],
+  correct:2,
+  explain:"Cuando los elementos de juego se usan sin propósito pedagógico claro ni impacto motivacional real (sin retos, progresión o retroalimentación), se trata de gamificación superficial o 'de plástico'."},
+
+ {level:3, levelName:"Motivación",
+  q:"Según la Teoría de la Autodeterminación de Deci y Ryan, ¿cuáles son las tres necesidades psicológicas básicas que impulsan la motivación intrínseca?",
+  options:[
+    "Autonomía, competencia y relación (vinculación social).",
+    "Puntos, insignias y niveles, base de cualquier motivación.",
+    "Recompensa, repetición y refuerzo, según el condicionamiento operante.",
+    "Curiosidad, logro y pérdida, según el marco Octalysis."
+  ],
+  correct:0,
+  explain:"Deci y Ryan proponen que la motivación intrínseca surge al satisfacer autonomía, competencia y relación. Los puntos/insignias son mecánicas externas, y refuerzo/Octalysis corresponden a otros marcos teóricos."},
+ {level:3, levelName:"Motivación",
+  q:"En una actividad gamificada, dar a los estudiantes la posibilidad de elegir el orden de sus retos fortalece especialmente:",
+  options:[
+    "El refuerzo positivo, porque aumenta la motivación general.",
+    "La competencia, porque les permite demostrar lo que saben.",
+    "La relación, porque fomenta el trabajo en equipo.",
+    "La autonomía."
+  ],
+  correct:3,
+  explain:"Permitir elegir y tener control sobre las propias decisiones fortalece específicamente la necesidad de autonomía, no la competencia ni la relación."},
+ {level:3, levelName:"Motivación",
+  q:"La Teoría del Flow de Csikszentmihalyi explica que el estado óptimo de disfrute y concentración ocurre cuando:",
+  options:[
+    "La persona alcanza un estado de relajación total sin necesidad de esfuerzo.",
+    "Existe un equilibrio entre el nivel de reto de la actividad y las habilidades de la persona.",
+    "Se combinan premios frecuentes con actividades muy sencillas.",
+    "La motivación surge únicamente de competir contra otros compañeros."
+  ],
+  correct:1,
+  explain:"El 'flow' aparece cuando el desafío está balanceado con la habilidad: ni tan fácil que aburra, ni tan difícil que frustre. No es simple relajación ni depende solo de la competencia."},
+
+ {level:4, levelName:"Diseño Gamificado",
+  q:"Desde el conductismo de Skinner, el uso de puntos e insignias en la gamificación funciona principalmente como:",
+  options:[
+    "Un refuerzo negativo, ya que elimina algo desagradable para el estudiante.",
+    "Un castigo simbólico que reduce las conductas no deseadas.",
+    "Un refuerzo positivo que aumenta la probabilidad de repetir una conducta deseada.",
+    "Un estímulo que solo funciona si se combina con calificaciones numéricas."
+  ],
+  correct:2,
+  explain:"Skinner plantea que un refuerzo positivo (como puntos o insignias) aumenta la probabilidad de que se repita la conducta que lo generó; no se trata de un castigo ni de un refuerzo negativo (que consiste en quitar algo desagradable)."},
+ {level:4, levelName:"Diseño Gamificado",
+  q:"El Octalysis de Yu-kai Chou es un marco que:",
+  options:[
+    "Identifica 8 impulsores ('core drives') que motivan el comportamiento humano en el diseño gamificado.",
+    "Clasifica los videojuegos en 8 géneros según su mecánica principal.",
+    "Calcula matemáticamente cuántos puntos debe dar cada actividad.",
+    "Mide del 1 al 8 el nivel de dificultad de un juego."
+  ],
+  correct:0,
+  explain:"Octalysis propone 8 impulsores centrales (significado, logro, creatividad, propiedad, influencia social, escasez, curiosidad y pérdida) que explican la motivación para participar; no es un sistema de géneros ni una escala de dificultad."},
+ {level:4, levelName:"Diseño Gamificado",
+  q:"En el marco MDA (Mecánicas, Dinámicas y Estética), las 'mecánicas' se refieren a:",
+  options:[
+    "La narrativa y el contexto visual que envuelve al juego.",
+    "Las emociones y sensaciones que experimenta el jugador al jugar.",
+    "El comportamiento que emerge cuando los jugadores interactúan entre sí.",
+    "Las reglas y sistemas básicos del juego, como puntos, turnos o niveles."
+  ],
+  correct:3,
+  explain:"Las mecánicas son los componentes y reglas fundamentales (acciones, controles, puntos). Las emociones corresponden a la estética, y el comportamiento emergente a la dinámica."},
+
+ {level:5, levelName:"Casos y Retos",
+  q:"Uno de los principales riesgos de una gamificación mal diseñada es:",
+  options:[
+    "Que los estudiantes se motiven demasiado y descuiden otras materias.",
+    "Caer en la 'gamificación de plástico': añadir puntos e insignias superficialmente sin generar motivación ni aprendizaje real.",
+    "Que se vuelva imposible evaluar objetivamente a los estudiantes.",
+    "Que dependa exclusivamente de premios materiales costosos para funcionar."
+  ],
+  correct:1,
+  explain:"La 'gamificación de plástico' ocurre cuando solo se decoran las actividades con elementos de juego sin una estrategia pedagógica real detrás. No implica exceso de motivación ni depende de premios costosos."},
+ {level:5, levelName:"Casos y Retos",
+  q:"En el caso 'La Liga de los Cazadores de Palabras', los estudiantes ganan puntos de experiencia y suben de nivel mientras dominan nuevo vocabulario en equipos. ¿Qué elementos de la gamificación identificas?",
+  options:[
+    "Se basa únicamente en la competencia individual, sin ningún elemento de colaboración.",
+    "Es un ejemplo de Aprendizaje Basado en Juegos, porque los estudiantes juegan en equipos.",
+    "Progresión (niveles), puntos de experiencia y trabajo colaborativo, que fortalecen competencia y relación.",
+    "Usa exclusivamente refuerzo negativo para evitar que los estudiantes pierdan niveles."
+  ],
+  correct:2,
+  explain:"El caso combina mecánicas típicas de gamificación (XP, niveles) con trabajo en equipo, fortaleciendo la competencia y la relación entre pares; no es un juego completo (ABJ) ni se basa solo en competencia individual."},
+ {level:5, levelName:"Casos y Retos",
+  q:"Un docente crea un reto donde los problemas aumentan de dificultad progresivamente, hay retroalimentación inmediata y los estudiantes eligen su ruta de aprendizaje. ¿Esta estrategia está bien gamificada?",
+  options:[
+    "Sí: equilibra reto y habilidad (Flow), da autonomía de elección y retroalimentación oportuna, más allá de solo puntos.",
+    "No, porque una gamificación real siempre necesita una narrativa o historia de fondo.",
+    "No, porque le falta un sistema de puntos visibles para los estudiantes.",
+    "Sí, pero solo porque incorpora tecnología para dar la retroalimentación."
+  ],
+  correct:0,
+  explain:"Una buena gamificación no depende de la narrativa, de mostrar puntos ni de usar tecnología costosa, sino de aplicar principios motivacionales reales: equilibrio reto-habilidad, autonomía y retroalimentación oportuna."}
+];
+const TOTAL_Q = QUESTIONS.length;
+const LEVEL_THEME = {
+ 1:{a:"var(--l1a)",b:"var(--l1b)"}, 2:{a:"var(--l2a)",b:"var(--l2b)"},
+ 3:{a:"var(--l3a)",b:"var(--l3b)"}, 4:{a:"var(--l4a)",b:"var(--l4b)"}, 5:{a:"var(--l5a)",b:"var(--l5b)"}
+};
+
+/* ================= STATE ================= */
+const state = {
+  screen:'register', name:'', avatar:'', selectedAvatar:'', errorMsg:'',
+  currentIndex:0, myAnswered:false, questionStartTs:0, answers:[], score:0, xp:0,
+  _lastTickSecond:null
+};
+
+/* ================= AUDIO (sonidos + VOZ que dice Correcto/Incorrecto) ================= */
+let audioCtx = null;
+function ensureAudio(){ try{ if(!audioCtx){ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); } if(audioCtx.state==='suspended') audioCtx.resume(); }catch(e){} }
+function tone(freq,dur,type,vol,delay){
+  try{
+    ensureAudio(); if(!audioCtx) return;
+    const t0 = audioCtx.currentTime + (delay||0);
+    const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+    osc.type = type||'sine'; osc.frequency.setValueAtTime(freq,t0);
+    gain.gain.setValueAtTime(vol||0.2, t0);
+    gain.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(t0); osc.stop(t0+dur+0.03);
+  }catch(e){}
+}
+function playSound(type){
+  switch(type){
+    case 'click': tone(440,.07,'triangle',.15); break;
+    case 'select': tone(600,.08,'triangle',.18); break;
+    case 'tick': tone(880,.05,'square',.07); break;
+    case 'fanfare': [523,659,784,1047,1319].forEach((f,i)=>tone(f,.28,'sine',.2,i*.13)); break;
+  }
+}
+let spanishVoice = null;
+function loadSpanishVoice(){
+  try{
+    const voices = window.speechSynthesis.getVoices();
+    spanishVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith('es')) || null;
+  }catch(e){}
+}
+if(typeof window!=='undefined' && window.speechSynthesis){
+  loadSpanishVoice();
+  window.speechSynthesis.onvoiceschanged = loadSpanishVoice;
+}
+function speakFeedback(text){
+  try{
+    if(!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'es-ES';
+    if(spanishVoice) u.voice = spanishVoice;
+    u.rate = 1;
+    u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ================= CONFETTI ================= */
+function launchConfetti(){
+  const layer = document.getElementById('confettiLayer');
+  const colors = ['#ff3d9a','#8b5cf6','#3b82f6','#22d3ee','#22c55e','#facc15','#fb923c','#ef4444'];
+  for(let i=0;i<70;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.left = (Math.random()*100)+'%';
+    el.style.background = colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDuration = (2.2+Math.random()*2)+'s';
+    el.style.animationDelay = (Math.random()*0.6)+'s';
+    layer.appendChild(el);
+    setTimeout(()=>el.remove(), 5000);
+  }
+}
+
+/* ================= RENDER HELPERS ================= */
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function set(html){ document.getElementById('app').innerHTML = html; }
+function levelBadgeStyle(level){ const t = LEVEL_THEME[level]; return `background:linear-gradient(90deg,${t.a},${t.b});`; }
+function identityFooter(){
+  return `<div class="footer-id">RETO GAMIFICACIÓN — Una actividad para comprobar lo aprendido<br>Creado por Karen, Juleidis y Sofía</div>`;
+}
+function topBar(){
+  return `<div class="topbar" style="justify-content:center;gap:18px;">
+    <div class="pill">${esc(state.avatar)} ${esc(state.name)}</div>
+    <div class="pill">❓ Pregunta ${state.currentIndex+1}/${TOTAL_Q}</div>
+  </div>`;
+}
+
+/* ================= REGISTRO (nombre + avatar) ================= */
+function selectAvatar(a){ playSound('select'); state.selectedAvatar = a; render(); }
+function submitRegister(){
+  const name = (document.getElementById('nameField')?.value || '').trim();
+  if(!name){ state.errorMsg='Escribe tu nombre.'; render(); return; }
+  if(!state.selectedAvatar){ state.errorMsg='Elige un avatar.'; render(); return; }
+  ensureAudio();
+  playSound('click');
+  state.name = name; state.avatar = state.selectedAvatar; state.errorMsg='';
+  state.currentIndex = 0; state.answers = []; state.score = 0;
+  startQuestion(0);
+}
+
+function renderRegister(){
+  set(`
+  <div class="container" style="justify-content:center;flex:1;">
+    <div style="text-align:center;">
+      <div class="logo-title">🎮 RETO GAMIFICACIÓN</div>
+      <div class="subtitle">Una actividad para comprobar lo aprendido</div>
+      <div class="author">Creado por Karen, Juleidis y Sofía</div>
+    </div>
+    <div class="floating-avatars">
+      ${AVATARS.map((a,i)=>`<span class="float-em" style="left:${(i*7.2)%95}%;animation-delay:${(i*0.4)%3}s;">${a}</span>`).join('')}
+    </div>
+    <div class="card" style="max-width:520px;width:100%;text-align:center;">
+      <p>¿Cómo te llamas?</p>
+      <input type="text" id="nameField" placeholder="Tu nombre" oninput="state.errorMsg=''">
+      <p style="margin-top:20px;">Elige tu avatar</p>
+      <div class="avatar-grid">
+        ${AVATARS.map(a=>`<div class="avatar-opt ${state.selectedAvatar===a?'selected':''}" onclick="selectAvatar('${a}')">${a}</div>`).join('')}
+      </div>
+      ${state.errorMsg ? `<p class="error-msg" style="margin-top:14px;">${esc(state.errorMsg)}</p>` : ''}
+      <div style="margin-top:20px;"><button class="btn green" onclick="submitRegister()">✅ Comenzar el reto</button></div>
+    </div>
+  </div>
+  ${identityFooter()}
+  `);
+}
+
+/* ================= PREGUNTA + TEMPORIZADOR ================= */
+function startQuestion(idx){
+  state.currentIndex = idx;
+  state.myAnswered = false;
+  state.questionStartTs = Date.now();
+  state._lastTickSecond = null;
+  state.screen = 'question';
+  render();
+  startTicking();
+}
+
+function tickFast(){
+  if(state.screen!=='question') return;
+  const elapsed = Date.now() - state.questionStartTs;
+  const remainMs = Math.max(0, QUESTION_TIME - elapsed);
+  const remainSec = Math.ceil(remainMs/1000);
+  const numEl = document.getElementById('timerNum');
+  const barEl = document.getElementById('timerBarInner');
+  if(numEl){ numEl.textContent = remainSec; numEl.classList.toggle('urgent', remainSec<=5); }
+  if(barEl){ barEl.style.width = Math.max(0,(remainMs/QUESTION_TIME)*100)+'%'; }
+  if(remainSec<=5 && remainSec>=1 && state._lastTickSecond!==remainSec){ state._lastTickSecond=remainSec; playSound('tick'); }
+  if(!state.myAnswered && remainMs<=0){ submitAnswer(-1); }
+}
+function startTicking(){ if(window._rgFast) clearInterval(window._rgFast); window._rgFast = setInterval(tickFast, 250); }
+function stopTicking(){ if(window._rgFast) clearInterval(window._rgFast); }
+
+function submitAnswer(choiceIndex){
+  if(state.myAnswered) return;
+  state.myAnswered = true;
+  stopTicking();
+  const q = QUESTIONS[state.currentIndex];
+  const correct = choiceIndex === q.correct;
+  const elapsed = Math.min(QUESTION_TIME, Date.now() - state.questionStartTs);
+  const remaining = Math.max(0, QUESTION_TIME - elapsed);
+  const bonus = correct ? Math.round((remaining/QUESTION_TIME)*30) : 0;
+  const xpEarned = correct ? 100+bonus : 0;
+  state.answers.push({ qIndex: state.currentIndex, choiceIndex, correct, xpEarned });
+  if(correct) state.score++;
+  state.xp += xpEarned;
+  speakFeedback(correct ? '¡Correcto!' : 'Incorrecto');
+  state.screen = 'feedback';
+  render();
+}
+
+function questionHTML(){
+  const q = QUESTIONS[state.currentIndex];
+  return `
+  ${topBar()}
+  <div class="progress-outer"><div class="progress-inner" style="width:${(state.currentIndex/TOTAL_Q)*100}%"></div></div>
+  <div class="level-badge" style="${levelBadgeStyle(q.level)}">Nivel ${q.level} · ${esc(q.levelName)}</div>
+  <div class="timer-wrap">
+    <div class="timer-num" id="timerNum">25</div>
+    <div class="timer-bar-outer"><div class="timer-bar-inner" id="timerBarInner" style="width:100%"></div></div>
+  </div>
+  <div class="card" style="width:100%;">
+    <div class="question-box">${esc(q.q)}</div>
+    <div class="options-grid">
+      ${q.options.map((o,i)=>`<button class="opt-btn opt${i}" onclick="submitAnswer(${i})"><span class="letter">${'ABCD'[i]}</span>${esc(o)}</button>`).join('')}
+    </div>
+  </div>
+  `;
+}
+
+/* ================= RETROALIMENTACIÓN ================= */
+function nextFromFeedback(){
+  playSound('click');
+  const next = state.currentIndex + 1;
+  if(next >= TOTAL_Q){
+    state.screen='result'; playSound('fanfare'); launchConfetti(); render();
+    const percent = Math.round((state.score/TOTAL_Q)*100);
+    setTimeout(()=>speakFeedback(`${state.name}, obtuviste ${state.xp} puntos de experiencia, con ${state.score} de ${TOTAL_Q} respuestas correctas. ¡${badgeForPercent(percent).voice}!`), 600);
+  }
+  else { startQuestion(next); }
+}
+
+function feedbackHTML(){
+  const idx = state.currentIndex;
+  const q = QUESTIONS[idx];
+  const mine = state.answers.find(a=>a.qIndex===idx);
+  const isLast = idx >= TOTAL_Q-1;
+  return `
+  ${topBar()}
+  <div class="card" style="width:100%;text-align:center;">
+    ${mine && mine.correct ? `<div class="feedback-icon">🎉</div><h2 style="color:#4ade80;">¡Correcto!</h2>`
+      : (mine && mine.choiceIndex===-1 ? `<div class="feedback-icon">⌛</div><h2 style="color:#f87171;">Se acabó el tiempo</h2>` : `<div class="feedback-icon">😅</div><h2 style="color:#f87171;">Incorrecto</h2>`)}
+    <div class="options-grid" style="margin-top:14px;">
+      ${q.options.map((o,i)=>`<div class="opt-btn opt${i} ${i===q.correct?'correct-answer':(mine&&mine.choiceIndex===i?'wrong-answer':'')}" style="cursor:default;"><span class="letter">${'ABCD'[i]}</span>${esc(o)}</div>`).join('')}
+    </div>
+    <div class="explain-box" style="margin-top:16px;text-align:left;"><b>💡 Explicación:</b> ${esc(q.explain)}</div>
+  </div>
+  <button class="btn green" style="font-size:1.2rem;" onclick="nextFromFeedback()">${isLast? '🏁 Ver resultado final' : '➡️ Siguiente pregunta'}</button>
+  `;
+}
+
+/* ================= RESULTADO FINAL (sin ranking) ================= */
+function badgeForPercent(percent){
+  if(percent>=90) return { label:'🏆 Experto/a en Gamificación', voice:'eres experta o experto en gamificación' };
+  if(percent>=75) return { label:'🥈 Avanzado/a en Gamificación', voice:'tienes un nivel avanzado en gamificación' };
+  if(percent>=50) return { label:'🥉 Aprendiz de Gamificación', voice:'vas bien como aprendiz de gamificación' };
+  return { label:'🌱 Principiante en Gamificación', voice:'sigue practicando los conceptos de gamificación' };
+}
+function playAgain(){
+  state.screen='register'; state.name=''; state.avatar=''; state.selectedAvatar='';
+  state.currentIndex=0; state.answers=[]; state.score=0; state.xp=0; state.errorMsg='';
+  render();
+}
+function resultHTML(){
+  const percent = Math.round((state.score/TOTAL_Q)*100);
+  const badge = badgeForPercent(percent);
+  const incorrect = TOTAL_Q - state.score;
+  return `
+  <div class="card" style="width:100%;text-align:center;">
+    <div class="result-avatar-circle">${esc(state.avatar)}</div>
+    <div class="result-name">${esc(state.name)}</div>
+    <div class="badge-pill">${badge.label}</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num">${state.xp}</div><div class="stat-label">XP TOTAL</div></div>
+      <div class="stat-card"><div class="stat-num">${percent}%</div><div class="stat-label">ACIERTOS</div></div>
+      <div class="stat-card"><div class="stat-num">${state.score}</div><div class="stat-label">CORRECTAS</div></div>
+      <div class="stat-card"><div class="stat-num">${incorrect}</div><div class="stat-label">INCORRECTAS</div></div>
+    </div>
+  </div>
+  <button class="btn" style="font-size:1.15rem;" onclick="playAgain()">🔁 Jugar de nuevo</button>
+  <button class="outline-btn" onclick="playAgain()">🏠 Volver al inicio</button>
+  `;
+}
+
+/* ================= MAIN RENDER DISPATCH ================= */
+function render(){
+  switch(state.screen){
+    case 'register': renderRegister(); break;
+    case 'question': set(`<div class="container">${questionHTML()}</div>${identityFooter()}`); break;
+    case 'feedback': set(`<div class="container">${feedbackHTML()}</div>${identityFooter()}`); break;
+    case 'result': set(`<div class="container">${resultHTML()}</div>${identityFooter()}`); break;
+    default: renderRegister();
+  }
+}
+
+render();
+</script>
+</body>
+</html>
